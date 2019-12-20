@@ -65,8 +65,23 @@ export default {
     sumbitForm () {
       this.$refs.myForm.validate((isOk) => {
         if (isOk) {
-          // 校验成功
-          this.$router.push('/home')
+          // 校验成功 发送axios请求
+          this.$axios({
+            url: '/authorizations',
+            method: 'post',
+            data: this.loginForm
+          }).then((result) => {
+            // 发送请求成功
+            // 前端 缓存令牌
+            window.localStorage.setItem('user-token', result.data.data.token)
+            this.$router.push('/home')
+          }).catch(() => {
+            // UI自带的方法
+            this.$message({
+              message: '您的手机号或者验证码不正确',
+              type: 'warning'
+            })
+          })
         }
       })
     }
